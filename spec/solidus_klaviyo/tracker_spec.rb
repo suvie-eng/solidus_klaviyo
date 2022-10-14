@@ -12,6 +12,14 @@ RSpec.describe SolidusKlaviyo::Tracker do
   end
 
   describe '#track' do
+    before(:each) do
+      # Configure global Klaviyo client allows Klaviyo::TrackIdentify
+      # to exist.
+      SolidusKlaviyo.configure do |config|
+        config.api_key = 'secret123'
+      end
+    end
+
     it 'tracks the event through the Klaviyo API' do
       klaviyo_client = stub_klaviyo_client
 
@@ -43,9 +51,6 @@ RSpec.describe SolidusKlaviyo::Tracker do
   private
 
   def stub_klaviyo_client
-    Klaviyo.configure do |config|
-      config.api_key['ApiKeyAuth'] = 'secret123'
-    end
     class_double(Klaviyo::TrackIdentify)
   end
 end

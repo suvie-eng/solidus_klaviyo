@@ -22,6 +22,10 @@ module SolidusKlaviyo
 
     def configure
       yield configuration
+
+      Klaviyo.configure do |config|
+        config.api_key['ApiKeyAuth'] = config.api_key
+      end
     end
 
     def subscribe_now(list_id, email, properties = {})
