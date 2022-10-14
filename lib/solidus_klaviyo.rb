@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 require 'httparty'
-require 'klaviyo'
 require 'solidus_core'
 require 'solidus_support'
 require 'solidus_tracking'
@@ -12,6 +11,8 @@ require 'solidus_klaviyo/configuration'
 require 'solidus_klaviyo/tracker'
 require 'solidus_klaviyo/subscriber'
 require 'solidus_klaviyo/errors'
+
+require 'klaviyo_sdk'
 
 module SolidusKlaviyo
   class << self

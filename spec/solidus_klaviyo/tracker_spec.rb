@@ -7,14 +7,24 @@ RSpec.describe SolidusKlaviyo::Tracker do
 
       tracker = described_class.from_config
 
-      expect(tracker.options[:api_key]).to eq('test_key')
+      expect(tracker.is_a?(SolidusKlaviyo::Tracker))
     end
   end
 
   describe '#track' do
     it 'tracks the event through the Klaviyo API' do
       klaviyo_client = stub_klaviyo_client
+
       time = Time.zone.now
+
+      expect(klaviyo_client).to receive(:track_post).with({
+        event: 'Started Checkout',
+        email: 'jdoe@example.com',
+        customer_properties: { '$email' => 'jdoe@example.com' },
+        properties: { 'foo' => 'bar' },
+        time: time,
+      }.to_json)
+
       event = instance_double(
         SolidusTracking::Event::StartedCheckout,
         name: 'Started Checkout',
@@ -25,23 +35,17 @@ RSpec.describe SolidusKlaviyo::Tracker do
       )
 
       event_tracker = described_class.new(api_key: 'test_key')
+      allow(event_tracker).to receive(:klaviyo).and_return(klaviyo_client)
       event_tracker.track(event)
-
-      expect(klaviyo_client).to have_received(:track).with(
-        'Started Checkout',
-        email: 'jdoe@example.com',
-        customer_properties: { '$email' => 'jdoe@example.com' },
-        properties: { 'foo' => 'bar' },
-        time: time,
-      )
     end
   end
 
   private
 
   def stub_klaviyo_client
-    instance_spy(Klaviyo::Client).tap do |klaviyo_client|
-      allow(Klaviyo::Client).to receive(:new).and_return(klaviyo_client)
+    Klaviyo.configure do |config|
+      config.api_key['ApiKeyAuth'] = 'secret123'
     end
+    class_double(Klaviyo::TrackIdentify)
   end
 end
