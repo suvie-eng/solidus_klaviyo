@@ -1,7 +1,6 @@
 # frozen_string_literal: true
 
 require 'httparty'
-require 'klaviyo'
 require 'solidus_core'
 require 'solidus_support'
 require 'solidus_tracking'
@@ -13,6 +12,8 @@ require 'solidus_klaviyo/tracker'
 require 'solidus_klaviyo/subscriber'
 require 'solidus_klaviyo/errors'
 
+require 'klaviyo_sdk'
+
 module SolidusKlaviyo
   class << self
     def configuration
@@ -21,6 +22,10 @@ module SolidusKlaviyo
 
     def configure
       yield configuration
+
+      Klaviyo.configure do |config|
+        config.api_key['ApiKeyAuth'] = config.api_key
+      end
     end
 
     def subscribe_now(list_id, email, properties = {})

@@ -4,24 +4,25 @@ module SolidusKlaviyo
   class Tracker < SolidusTracking::Tracker
     class << self
       def from_config
-        new(api_key: SolidusKlaviyo.configuration.api_key)
+        new
       end
     end
 
     def track(event)
-      klaviyo.track(
-        event.name,
+      klaviyo.track_post({
+        token: SolidusKlaviyo.configuration.public_token,
+        event: event.name,
         email: event.email,
         customer_properties: event.customer_properties,
         properties: event.properties,
         time: event.time,
-      )
+      }.to_json)
     end
 
     private
 
     def klaviyo
-      @klaviyo ||= Klaviyo::Client.new(options.fetch(:api_key))
+      @klaviyo ||= Klaviyo::TrackIdentify
     end
   end
 end

@@ -2,6 +2,6 @@
 
 module SolidusKlaviyo
   class Configuration
-    attr_accessor :api_key, :default_list
+    attr_accessor :api_key, :public_token, :default_list
   end
 end
