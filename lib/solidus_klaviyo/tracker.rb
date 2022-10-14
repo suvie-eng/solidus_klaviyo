@@ -10,6 +10,7 @@ module SolidusKlaviyo
 
     def track(event)
       klaviyo.track_post({
+        token: SolidusKlaviyo.configuration.public_token,
         event: event.name,
         email: event.email,
         customer_properties: event.customer_properties,

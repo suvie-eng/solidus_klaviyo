@@ -17,6 +17,7 @@ RSpec.describe SolidusKlaviyo::Tracker do
       # to exist.
       SolidusKlaviyo.configure do |config|
         config.api_key = 'secret123'
+        config.public_token = 'token123'
       end
     end
 
@@ -26,11 +27,12 @@ RSpec.describe SolidusKlaviyo::Tracker do
       time = Time.zone.now
 
       expect(klaviyo_client).to receive(:track_post).with({
+        token: 'token123',
         event: 'Started Checkout',
         email: 'jdoe@example.com',
         customer_properties: { '$email' => 'jdoe@example.com' },
         properties: { 'foo' => 'bar' },
-        time: time,
+        time: time
       }.to_json)
 
       event = instance_double(
@@ -39,7 +41,7 @@ RSpec.describe SolidusKlaviyo::Tracker do
         email: 'jdoe@example.com',
         customer_properties: { '$email' => 'jdoe@example.com' },
         properties: { 'foo' => 'bar' },
-        time: time,
+        time: time
       )
 
       event_tracker = described_class.new(api_key: 'test_key')
